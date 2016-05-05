@@ -1,0 +1,20 @@
+{
+    "name": "yadjet/mts/sdk",
+    "description": "MTS SDK",
+    "require": {
+        "php": ">=5.4",
+        "yiisoft/yii2": "*"
+    },
+    "authors": [
+        {
+            "name": "hiscaler",
+            "email": "hiscaler@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "yadjet\\mts\\sdk\\": "src/yadjet/mts/sdk"
+        }
+    }
+}
