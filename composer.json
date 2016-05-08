@@ -1,5 +1,5 @@
 {
-    "name": "yadjet/mts/sdk",
+    "name": "yadjet/mts-sdk",
     "description": "MTS SDK",
     "require": {
         "php": ">=5.4",
