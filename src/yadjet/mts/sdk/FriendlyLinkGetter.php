@@ -4,20 +4,12 @@ namespace yadjet\mts\sdk;
 
 use yii\db\Query;
 
-/**
- * 数据拉取
- * @author hiscaler <hiscaler@gmail.com>
- */
-class BaseDataGetter
+class FriendlyLinkGetter implements DataGetterInterface
 {
 
     use GetterTrait;
 
-    const RETURN_ALL = 'ALL';
-    const RETURN_LIST = 'LIST';
-    const RETURN_ONE = 'ONE';
-
-    public static function friendlyLinkAll($params = [])
+    public static function parseQueryCondition($params = [])
     {
         $params = self::parseParams($params, self::RETURN_ALL);
         $where = [];
@@ -30,6 +22,13 @@ class BaseDataGetter
                 $where['type'] = $type == 'picture' ? 1 : 0;
             }
         }
+
+        return $params;
+    }
+
+    public static function all($params = [])
+    {
+        $params = self::parseQueryCondition($params);
         $query = (new Query())->select($params['fields'])
             ->from('{{%friendly_link}}')
             ->offset($params['offset'])
@@ -39,25 +38,20 @@ class BaseDataGetter
         return self::toAll($query, $params);
     }
 
-    public static function friendlyLinkList($params = [])
+    public static function cell($params = [])
     {
-        $params = self::parseParams($params, self::RETURN_LIST);
-        $where = [];
-        if (isset($params['group'])) {
-            $where['group'] = (int) $params['group'];
-        }
-        if (isset($params['type'])) {
-            $type = strtolower($params['type']);
-            if (in_array($type, ['picture', 'text'])) {
-                $where['type'] = $type == 'picture' ? 1 : 0;
-            }
-        }
+        $params = self::parseQueryCondition($params = array());
         return (new Query())->select($params['fields'])
                 ->from('{{%friendly_link}}')
                 ->offset($params['offset'])
                 ->limit($params['limit'])
                 ->orderBy(self::parseOrderBy($params['orderBy']))
                 ->all();
+    }
+
+    public static function one($params = [])
+    {
+        throw new \yii\base\NotSupportedException();
     }
 
 }

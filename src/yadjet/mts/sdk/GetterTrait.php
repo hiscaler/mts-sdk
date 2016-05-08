@@ -32,6 +32,10 @@ trait GetterTrait
                 $defaultParams = [];
         }
 
+        if (!isset($params['fields'])) {
+            $defaultParams['fields'] = '*';
+        }
+
         foreach ($defaultParams as $key => $value) {
             if (!isset($params[$key])) {
                 $params[$key] = $value;
@@ -73,6 +77,14 @@ trait GetterTrait
         $meta['pageCount'] = $pageCount;
 
         return $meta;
+    }
+
+    public static function toAll(\yii\db\Query $query, $params)
+    {
+        return [
+            'items' => $query->all(),
+            '_meta' => self::paginationMeta($query, $params)
+        ];
     }
 
 }
