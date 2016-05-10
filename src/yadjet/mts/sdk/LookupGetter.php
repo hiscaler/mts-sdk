@@ -21,7 +21,7 @@ class LookupGetter implements DataGetterInterface
         throw new \yii\base\NotSupportedException();
     }
 
-    public static function cell($params = [])
+    public static function rows($params = [])
     {
         $params = self::parseQueryCondition($params);
 
@@ -35,7 +35,7 @@ class LookupGetter implements DataGetterInterface
     {
         return (new Query())
                 ->from('{{%lookup}}')
-                ->where(['tenant_id' => 1, 'label' => strtolower($params['label'])])
+                ->where(['tenant_id' => self::getConstantValue('TENANT_ID'), 'label' => strtolower($params['label'])])
                 ->one();
     }
 

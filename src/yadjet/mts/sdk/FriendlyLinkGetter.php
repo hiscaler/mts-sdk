@@ -9,44 +9,37 @@ class FriendlyLinkGetter implements DataGetterInterface
 
     use GetterTrait;
 
-    public static function parseQueryCondition($params = [])
+    public static function parseQuery($params = [])
     {
-        $params = self::parseParams($params, self::RETURN_ALL);
+        $rawCondition = $params['condition'];
         $where = [];
-        if (isset($params['group'])) {
-            $where['group'] = (int) $params['group'];
+        if (isset($rawCondition['group'])) {
+            $where['group'] = (int) $rawCondition['group'];
         }
-        if (isset($params['type'])) {
-            $type = strtolower($params['type']);
+        if (isset($rawCondition['type'])) {
+            $type = strtolower($rawCondition['type']);
             if (in_array($type, ['picture', 'text'])) {
                 $where['type'] = $type == 'picture' ? 1 : 0;
             }
         }
+        $params['condition'] = $where;
 
         return $params;
     }
 
     public static function all($params = [])
     {
-        $params = self::parseQueryCondition($params);
-        $query = (new Query())->select($params['fields'])
-            ->from('{{%friendly_link}}')
-            ->offset($params['offset'])
-            ->limit($params['limit'])
-            ->orderBy(self::parseOrderBy($params['orderBy']));
+        $params = static::parseParams($params, self::RETURN_ALL);
+        $query = self::parseQuery($params);
 
         return self::toAll($query, $params);
     }
 
-    public static function cell($params = [])
+    public static function rows($params = [])
     {
-        $params = self::parseQueryCondition($params = array());
-        return (new Query())->select($params['fields'])
-                ->from('{{%friendly_link}}')
-                ->offset($params['offset'])
-                ->limit($params['limit'])
-                ->orderBy(self::parseOrderBy($params['orderBy']))
-                ->all();
+        $params = static::parseParams($params, self::RETURN_ALL);
+
+        return self::parseQuery($params)->all();
     }
 
     public static function one($params = [])

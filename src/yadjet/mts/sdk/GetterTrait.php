@@ -5,8 +5,12 @@ namespace yadjet\mts\sdk;
 trait GetterTrait
 {
 
-    private static function parseParams($params, $returnType = self::RETURN_LIST)
+    public static function parseParams($params, $returnType = self::RETURN_ROWS)
     {
+        if (!is_array($params)) {
+            throw new \yii\base\InvalidParamException('参数无效。');
+        }
+
         switch ($returnType) {
             case self::RETURN_ALL:
                 $defaultParams = [
@@ -20,7 +24,7 @@ trait GetterTrait
 
                 break;
 
-            case self::RETURN_LIST:
+            case self::RETURN_ROWS:
                 $defaultParams = [
                     'offset' => 0,
                     'limit' => 10,
@@ -34,6 +38,12 @@ trait GetterTrait
 
         if (!isset($params['fields'])) {
             $defaultParams['fields'] = '*';
+        }
+        if (!isset($params['condition'])) {
+            $params['condition'] = [];
+        }
+        if (!isset($params['condition']['tenant_id'])) {
+            $params['condition']['tenantId'] = defined('MTS_SDK_TENANT_ID') ? constant('MTS_SDK_TENANT_ID') : 0;
         }
 
         foreach ($defaultParams as $key => $value) {
@@ -71,8 +81,8 @@ trait GetterTrait
             'perPage' => $pageSize,
         ];
 
-        $totalCount = $query->count();
-        $pageCount = (($totalCount + $pageSize - 1) / $pageSize);
+        $totalCount = (int) $query->count();
+        $pageCount = (int) (($totalCount + $pageSize - 1) / $pageSize);
         $meta['totalCount'] = $totalCount;
         $meta['pageCount'] = $pageCount;
 
@@ -85,6 +95,13 @@ trait GetterTrait
             'items' => $query->all(),
             '_meta' => self::paginationMeta($query, $params)
         ];
+    }
+
+    protected static function getConstantValue($name, $defaultValue = null)
+    {
+        $name = 'MTS_SDK_' . strtoupper($name);
+
+        return defined($name) ? constant($name) : $defaultValue;
     }
 
 }
