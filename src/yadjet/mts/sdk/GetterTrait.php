@@ -37,13 +37,17 @@ trait GetterTrait
         }
 
         if (!isset($params['fields'])) {
-            $defaultParams['fields'] = '*';
+            $defaultParams['fields'] = 't.*';
+        } else {
+            foreach ($params['fields'] as &$field) {
+                $field = "t.$field";
+            }
         }
         if (!isset($params['condition'])) {
             $params['condition'] = [];
         }
         if (!isset($params['condition']['tenant_id'])) {
-            $params['condition']['tenantId'] = defined('MTS_SDK_TENANT_ID') ? constant('MTS_SDK_TENANT_ID') : 0;
+            $params['condition']['t.tenant_id'] = defined('MTS_SDK_TENANT_ID') ? constant('MTS_SDK_TENANT_ID') : 0;
         }
 
         foreach ($defaultParams as $key => $value) {
@@ -53,6 +57,21 @@ trait GetterTrait
         }
 
         return $params;
+    }
+
+    public static function fixQueryFields($fields, $addT = true)
+    {
+        if (!is_array($fields)) {
+            $fields = explode(',', $fields);
+        }
+        if ($addT) {
+            foreach ($fields as $i => $field) {
+                $fields[$i] = "t.$field";
+            }
+        }
+
+
+        return $fields;
     }
 
     private static function parseOrderBy($orderBy)
