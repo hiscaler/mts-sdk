@@ -2,8 +2,6 @@
 
 namespace yadjet\mts\sdk;
 
-use yii\db\Query;
-
 class FriendlyLinkGetter implements DataGetterInterface
 {
 
