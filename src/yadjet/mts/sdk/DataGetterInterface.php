@@ -17,5 +17,5 @@ interface DataGetterInterface
 
     public static function rows($params = []);
 
-    public static function one($params = []);
+    public static function one($id, $fields = '*', $expand = 'content');
 }

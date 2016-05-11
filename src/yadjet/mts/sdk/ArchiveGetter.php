@@ -79,13 +79,27 @@ class ArchiveGetter implements DataGetterInterface
         return self::parseQuery($params)->all();
     }
 
-    public static function one($params = [])
+    public static function one($id, $fields = '*', $expand = 'content')
     {
-        $params = static::fixParams($params, self::RETURN_ROWS);
-        return (new Query())->select($params['fields'])
-                ->from('{{%archive}}')
-                ->where($params['condition'])
-                ->one();
+        $query = (new Query())->select(self::fixQueryFields($fields))
+            ->from('{{%archive}} t')
+            ->where(['t.id' => (int) $id]);
+        if ($expand) {
+            $expand = explode(',', $expand);
+            foreach ($expand as $name) {
+                switch ($name) {
+                    case 'content':
+                        $query->leftJoin('{{%archive_content}} ac', '[[t.id]] = [[ac.archive_id]]');
+                        $query->addSelect(['ac.content']);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+
+        return $query->one();
     }
 
 }
