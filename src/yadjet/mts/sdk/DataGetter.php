@@ -10,8 +10,6 @@ namespace yadjet\mts\sdk;
 class DataGetter
 {
 
-    use DataGetterTrait;
-
     const RETURN_ALL = 'ALL';
     const RETURN_ROWS = 'ROWS';
     const RETURN_ONE = 'ONE';
@@ -19,19 +17,11 @@ class DataGetter
     const BOOLEAN_FALSE = 0;
     const BOOLEAN_TRUE = 1;
 
-    public static function all($fields = '*', $where = [], $orderBy = 'ordering.asc', $page = 1, $pageSize = 10)
+    protected static function getConstantValue($name, $defaultValue = null)
     {
-        $query = static::parseQuery($fields, $where, $orderBy, ($page - 1) * $pageSize, $pageSize);
+        $name = 'MTS_SDK_' . strtoupper($name);
 
-        return [
-            'items' => $query->all(),
-            '_meta' => self::paginationMeta($query, $page, $pageSize),
-        ];
-    }
-
-    public static function rows($fields = '*', $where = [], $orderBy = 'ordering.asc', $offset = 0, $limit = 10)
-    {
-        return static::parseQuery($fields, $where, $orderBy, $offset, $limit)->all();
+        return defined($name) ? constant($name) : $defaultValue;
     }
 
 }

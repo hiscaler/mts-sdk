@@ -114,11 +114,19 @@ trait DataGetterTrait
         ];
     }
 
-    protected static function getConstantValue($name, $defaultValue = null)
+    public static function all($fields = '*', $where = [], $orderBy = 'ordering.asc', $page = 1, $pageSize = 10)
     {
-        $name = 'MTS_SDK_' . strtoupper($name);
+        $query = static::parseQuery($fields, $where, $orderBy, ($page - 1) * $pageSize, $pageSize);
 
-        return defined($name) ? constant($name) : $defaultValue;
+        return [
+            'items' => $query->all(),
+            '_meta' => self::paginationMeta($query, $page, $pageSize),
+        ];
+    }
+
+    public static function rows($fields = '*', $where = [], $orderBy = 'ordering.asc', $offset = 0, $limit = 10)
+    {
+        return static::parseQuery($fields, $where, $orderBy, $offset, $limit)->all();
     }
 
 }

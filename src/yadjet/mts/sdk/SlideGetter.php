@@ -12,6 +12,8 @@ use Yii;
 class SlideGetter extends DataGetter implements DataGetterInterface
 {
 
+    use DataGetterTrait;
+
     public static function parseQuery($fields = null, $where = array(), $orderBy = 'ordering.asc', $offset = 0, $limit = 10)
     {
         if (empty($fields)) {

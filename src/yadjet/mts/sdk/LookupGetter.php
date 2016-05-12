@@ -2,15 +2,19 @@
 
 namespace yadjet\mts\sdk;
 
+use Yii;
 use yii\db\Query;
 
-class LookupGetter extends BaseDataGetter
+class LookupGetter extends DataGetter
 {
+
+    const RETURN_TYPE_INTEGER = 0;
+    const RETURN_TYPE_STRING = 1;
 
     public static function rows($labels)
     {
         $rawData = (new Query())
-            ->select(['value', 'return_type'])
+            ->select(['value', 'return_type', 'label'])
             ->from('{{%lookup}}')
             ->where(['tenant_id' => self::getConstantValue('TENANT_ID'), 'label' => array_keys($labels)])
             ->indexBy('label')
@@ -19,10 +23,10 @@ class LookupGetter extends BaseDataGetter
             if (isset($rawData[$key])) {
                 $value = $rawData[$key]['value'];
                 switch ($rawData[$key]['return_type']) {
-                    case self::RETURN_TYPE_INTEGER:
+                    case static::RETURN_TYPE_INTEGER:
                         $value = (int) $value;
                         break;
-                    case self::RETURN_TYPE_STRING:
+                    case static::RETURN_TYPE_STRING:
                         $value = (string) $value;
                         break;
                 }
@@ -47,10 +51,10 @@ class LookupGetter extends BaseDataGetter
         } else {
             $value = $rawData['value'];
             switch ($rawData['return_type']) {
-                case self::RETURN_TYPE_INTEGER:
+                case static::RETURN_TYPE_INTEGER:
                     $value = (int) $value;
                     break;
-                case self::RETURN_TYPE_STRING:
+                case static::RETURN_TYPE_STRING:
                     $value = (string) $value;
                     break;
             }
