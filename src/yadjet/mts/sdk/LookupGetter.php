@@ -4,39 +4,59 @@ namespace yadjet\mts\sdk;
 
 use yii\db\Query;
 
-class LookupGetter implements DataGetterInterface
+class LookupGetter extends BaseDataGetter
 {
 
-    use GetterTrait;
-
-    public static function parseQueryCondition($params = [])
+    public static function rows($labels)
     {
-        if (!isset($params['label'])) {
-            $params['label'] = '*';
+        $rawData = (new Query())
+            ->select(['value', 'return_type'])
+            ->from('{{%lookup}}')
+            ->where(['tenant_id' => self::getConstantValue('TENANT_ID'), 'label' => array_keys($labels)])
+            ->indexBy('label')
+            ->all();
+        foreach ($labels as $key => $defautValue) {
+            if (isset($rawData[$key])) {
+                $value = $rawData[$key]['value'];
+                switch ($rawData[$key]['return_type']) {
+                    case self::RETURN_TYPE_INTEGER:
+                        $value = (int) $value;
+                        break;
+                    case self::RETURN_TYPE_STRING:
+                        $value = (string) $value;
+                        break;
+                }
+                $labels[$key] = $value;
+            } else {
+                $labels[$key] = $defautValue;
+            }
         }
+
+        return $labels;
     }
 
-    public static function all($params = [])
+    public static function one($label, $defaultValue = null)
     {
-        throw new \yii\base\NotSupportedException();
-    }
+        $rawData = Yii::$app->getDb()->createCommand('SELECT [[value]], [[return_type]] FROM {{%lookup}} WHERE [[tenant_id]] = :tenantId AND [[label]] = :label AND [[enabled]] = :enabled')->bindValues([
+                ':label' => strtoupper(trim($label)),
+                ':tenantId' => self::getConstantValue('TENANT_ID'),
+                ':enabled' => self::BOOLEAN_TRUE
+            ])->queryOne();
+        if ($rawData === false) {
+            $value = $defaultValue;
+        } else {
+            $value = $rawData['value'];
+            switch ($rawData['return_type']) {
+                case self::RETURN_TYPE_INTEGER:
+                    $value = (int) $value;
+                    break;
+                case self::RETURN_TYPE_STRING:
+                    $value = (string) $value;
+                    break;
+            }
+        }
 
-    public static function rows($params = [])
-    {
-        $params = self::parseQueryCondition($params);
-
-        return (new Query())
-                ->from('{{%lookup}}')
-                ->where(['tenant_id' => 1, 'label' => strtolower($params['label'])])
-                ->all();
-    }
-
-    public static function one($params = [])
-    {
-        return (new Query())
-                ->from('{{%lookup}}')
-                ->where(['tenant_id' => self::getConstantValue('TENANT_ID'), 'label' => strtolower($params['label'])])
-                ->one();
+        return $value;
     }
 
 }

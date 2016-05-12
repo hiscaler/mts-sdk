@@ -4,31 +4,28 @@ namespace yadjet\mts\sdk;
 
 use yii\db\Query;
 
-class ArchiveGetter implements DataGetterInterface
+class ArchiveGetter extends DataGetter implements DataGetterInterface
 {
 
-    use GetterTrait;
-
-    public static function parseQuery($params = [])
+    public static function parseQuery($fields = '*', $where = [], $orderBy = 'ordering.asc', $offset = 0, $limit = 10)
     {
-        $rawCondition = $params['condition'];
-        $where = [
+        $condition = [
             't.enabled' => self::BOOLEAN_TRUE,
         ];
-        if (isset($rawCondition['node'])) {
-            $node = $rawCondition['node'];
+        if (isset($where['node'])) {
+            $node = $where['node'];
             if (is_string($node) && strpos($node, ',') !== false) {
                 $node = explode(',', $node);
             }
-            if (isset($rawCondition['children']) && !is_array($node)) {
+            if (isset($where['children']) && !is_array($node)) {
                 $ids = \app\models\Node::getChildrenIds($node);
                 array_unshift($ids, $node);
             }
-            $where['t.node_id'] = is_array($node) ? $node : (int) $node;
+            $condition['t.node_id'] = is_array($node) ? $node : (int) $node;
         }
         // 推送位
-        if (isset($rawCondition['label'])) {
-            $label = trim($rawCondition['label']);
+        if (isset($where['label'])) {
+            $label = trim($where['label']);
             $labelIds = (new Query())->select('id')
                 ->from('{{%label}}')
                 ->where(['alias' => strpos($label, ',') === false ? $label : explode(',', $label)])
@@ -41,42 +38,26 @@ class ArchiveGetter implements DataGetterInterface
                     ->andWhere(['in', 'lable_id', $labelIds])
                     ->groupBy('archive_id')
                     ->having('COUNT(*) = ' . count($labelIds));
-                $where = ['AND', $where, ['EXISTS', $subQuery]];
+                $condition = ['AND', $condition, ['EXISTS', $subQuery]];
             } else {
-                $where[] = '0 = 1';
+                $condition[] = '0 = 1';
             }
         }
 
-        if (isset($rawCondition['hasThumbnail'])) {
-            if ($rawCondition['hasThumbnail']) {
-                $where['t.has_thumbnail'] = self::BOOLEAN_TRUE;
+        if (isset($where['hasThumbnail'])) {
+            if ($where['hasThumbnail']) {
+                $condition['t.has_thumbnail'] = self::BOOLEAN_TRUE;
             }
         }
-        $params['condition'] = $where;
 
-        $query = (new Query())->select($params['fields'])
+        $query = (new Query())->select($fields)
             ->from('{{%archive}} t')
-            ->where($params['condition'])
-            ->offset($params['offset'])
-            ->limit($params['limit'])
-            ->orderBy(self::parseOrderBy($params['orderBy']));
+            ->where($condition)
+            ->offset($offset)
+            ->limit($limit)
+            ->orderBy(self::parseOrderBy($orderBy));
 
         return $query;
-    }
-
-    public static function all($params = [])
-    {
-        $params = static::parseParams($params, self::RETURN_ALL);
-        $query = self::parseQuery($params);
-
-        return self::toAll($query, $params);
-    }
-
-    public static function rows($params = [])
-    {
-        $params = static::parseParams($params, self::RETURN_ROWS);
-
-        return self::parseQuery($params)->all();
     }
 
     public static function one($id, $fields = '*', $expand = 'content')

@@ -2,42 +2,34 @@
 
 namespace yadjet\mts\sdk;
 
-class FriendlyLinkGetter implements DataGetterInterface
+use yii\db\Query;
+
+class FriendlyLinkGetter extends DataGetter implements DataGetterInterface
 {
 
-    use GetterTrait;
-
-    public static function parseQuery($params = [])
+    public static function parseQuery($fields = '*', $where = [], $orderBy = 'ordering.asc', $offset = 0, $limit = 10)
     {
-        $rawCondition = $params['condition'];
-        $where = [];
-        if (isset($rawCondition['group'])) {
-            $where['group'] = (int) $rawCondition['group'];
+        $condition = [
+            'tenant_id' => self::getConstantValue('TENANT_ID'),
+            'enabled' => self::BOOLEAN_TRUE
+        ];
+        if (isset($where['group'])) {
+            $condition['group'] = (int) $where['group'];
         }
-        if (isset($rawCondition['type'])) {
-            $type = strtolower($rawCondition['type']);
+        if (isset($where['type'])) {
+            $type = strtolower($where['type']);
             if (in_array($type, ['picture', 'text'])) {
-                $where['type'] = $type == 'picture' ? 1 : 0;
+                $condition['type'] = $type == 'picture' ? 1 : 0;
             }
         }
-        $params['condition'] = $where;
 
-        return $params;
-    }
-
-    public static function all($params = [])
-    {
-        $params = static::parseParams($params, self::RETURN_ALL);
-        $query = self::parseQuery($params);
-
-        return self::toAll($query, $params);
-    }
-
-    public static function rows($params = [])
-    {
-        $params = static::parseParams($params, self::RETURN_ALL);
-
-        return self::parseQuery($params)->all();
+        return (new Query())
+                ->select($fields)
+                ->from('{{%friendly_link}}')
+                ->where($condition)
+                ->orderBy(self::parseOrderBy($orderBy))
+                ->offset($offset)
+                ->limit($limit);
     }
 
     public static function one($params = [])

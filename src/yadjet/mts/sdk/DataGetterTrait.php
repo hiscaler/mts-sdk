@@ -2,7 +2,7 @@
 
 namespace yadjet\mts\sdk;
 
-trait GetterTrait
+trait DataGetterTrait
 {
 
     public static function parseParams($params, $returnType = self::RETURN_ROWS)
@@ -70,11 +70,10 @@ trait GetterTrait
             }
         }
 
-
         return $fields;
     }
 
-    private static function parseOrderBy($orderBy)
+    public static function parseOrderBy($orderBy)
     {
         $res = [];
         if ($orderBy) {
@@ -82,9 +81,9 @@ trait GetterTrait
             foreach ($rawData as $value) {
                 if (strpos($value, '.') !== false) {
                     $t = explode('.', $value);
-                    $res[$t[0]] = $t[1];
+                    $res[$t[0]] = strtolower($t[1]) == 'asc' ? SORT_ASC : SORT_DESC;
                 } else {
-                    $res[$orderBy] = SORT_DESC;
+                    $res[$orderBy] = SORT_ASC;
                 }
             }
         }
@@ -92,11 +91,10 @@ trait GetterTrait
         return $res;
     }
 
-    public static function paginationMeta(\yii\db\Query $query, $config)
+    public static function paginationMeta(\yii\db\Query $query, $page = 1, $pageSize = 10)
     {
-        $pageSize = $config['pageSize'];
         $meta = [
-            'currentPage' => $config['currentPage'],
+            'currentPage' => $page,
             'perPage' => $pageSize,
         ];
 
