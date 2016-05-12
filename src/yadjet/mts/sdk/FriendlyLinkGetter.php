@@ -4,6 +4,11 @@ namespace yadjet\mts\sdk;
 
 use yii\db\Query;
 
+/**
+ * 友情链接数据拉取
+ * 
+ * @author hiscaler <hiscaler@gmail.com>
+ */
 class FriendlyLinkGetter extends DataGetter implements DataGetterInterface
 {
 
