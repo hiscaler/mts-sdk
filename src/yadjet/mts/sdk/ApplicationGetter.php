@@ -58,9 +58,7 @@ class ApplicationGetter extends DataGetter
             }
         }
 
-        return [
-            'items' => $rules
-        ];
+        return $rules;
     }
 
 }
