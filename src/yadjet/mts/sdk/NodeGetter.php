@@ -2,14 +2,12 @@
 
 namespace yadjet\mts\sdk;
 
-use Yii;
-
 /**
  * 幻灯片数据拉取
  * 
  * @author hiscaler <hiscaler@gmail.com>
  */
-class NodeGetter extends DataGetter implements DataGetterInterface
+class NodeGetter extends DataGetter
 {
 
     private static function toTree($arr, $keyNodeId, $keyParentId = 'parent_id', $keyChildren = 'children', &$refs = null)
@@ -36,6 +34,16 @@ class NodeGetter extends DataGetter implements DataGetterInterface
         }
 
         return $tree;
+    }
+
+    /**
+     * 获取节点名称
+     * @param integer $id 节点编号
+     * @return string|boolean
+     */
+    public static function name($id)
+    {
+        return (new \yii\db\Query())->select('name')->from('{{%node}}')->where(['id' => (int) $id])->scalar();
     }
 
 }
