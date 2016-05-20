@@ -2,18 +2,20 @@
 
 namespace yadjet\mts\sdk;
 
+use Yii;
+
 class ApplicationGetter extends DataGetter
 {
 
     public static function viewFile($id, $name, $defaultViewFile = null)
     {
         $viewFile = null;
-        $paramaters = Yii::$app->getDb()->createCommand('SELECT [[paramaters]] FROM {{%node}} WHERE [[id]] = :id AND [[tenant_id]] = :tenantId')->bindValues([
+        $parameters = Yii::$app->getDb()->createCommand('SELECT [[parameters]] FROM {{%node}} WHERE [[id]] = :id AND [[tenant_id]] = :tenantId')->bindValues([
                 ':id' => (int) $id,
                 ':tenantId' => self::getConstantValue('TENANT_ID')
             ])->queryScalar();
-        if (!empty($paramaters)) {
-            foreach (explode("\r\n", $paramaters) as $paramater) {
+        if (!empty($parameters)) {
+            foreach (explode("\r\n", $parameters) as $paramater) {
                 if (substr($paramater, 0, 1) == $name) {
                     $params = explode('~', $paramater);
                     $viewFile = isset($params[2]) ? $params[2] : null;
@@ -28,14 +30,14 @@ class ApplicationGetter extends DataGetter
     public static function urlRules($rejectIds = [])
     {
         $rules = [];
-        $sql = 'SELECT [[id]], [[alias]], [[paramaters]] FROM {{%node}} WHERE [[tenant_id]] = :tenantId';
+        $sql = 'SELECT [[id]], [[alias]], [[parameters]] FROM {{%node}} WHERE [[tenant_id]] = :tenantId';
         if ($rejectIds) {
             $sql .= ' AND [[id]] NOT IN (' . implode(',', $rejectIds) . ')';
         }
-        $nodes = Yii::$app->getDb()->createCommand($sql)->bindValue(':tenantId', self::getConstantValue('TENANT_ID'), PDO::PARAM_INT)->queryAll();
+        $nodes = Yii::$app->getDb()->createCommand($sql)->bindValue(':tenantId', self::getConstantValue('TENANT_ID'), \PDO::PARAM_INT)->queryAll();
 
         foreach ($nodes as $node) {
-            foreach (explode("\r\n", $node['paramaters']) as $paramater) {
+            foreach (explode("\r\n", $node['parameters']) as $paramater) {
                 if (!empty($paramater)) {
                     // Example: i:news/index~~/news/index.fashion.twig
                     $params = explode('~', substr($paramater, 2));
