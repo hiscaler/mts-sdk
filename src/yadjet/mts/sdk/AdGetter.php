@@ -20,7 +20,7 @@ class AdGetter extends DataGetter
     {
         $db = Yii::$app->getDb();
         $space = $db->createCommand('SELECT [[id]], [[width]], [[height]] FROM {{%ad_space}} WHERE [[tenant_id]] = :tenantId AND [[status]] = :status AND [[enabled]] = :enabled AND [[alias]] = :alias')->bindValues([
-                ':tenantId' => self::getConstantValue('TENANT_ID'),
+                ':tenantId' => self::getTenantId(),
                 ':status' => self::BOOLEAN_TRUE,
                 ':enabled' => self::BOOLEAN_TRUE,
                 ':alias' => strtolower(trim($alias))
@@ -70,7 +70,7 @@ class AdGetter extends DataGetter
     {
         $db = Yii::$app->getDb();
         $space = $db->createCommand('SELECT [[id]], [[width]], [[height]] FROM {{%ad_space}} WHERE [[tenant_id]] = :tenantId AND [[status]] = :status AND [[enabled]] = :enabled AND [[alias]] = :alias')->bindValues([
-                ':tenantId' => self::getConstantValue('TENANT_ID'),
+                ':tenantId' => self::getTenantId(),
                 ':status' => self::BOOLEAN_TRUE,
                 ':enabled' => self::BOOLEAN_TRUE,
                 ':alias' => strtolower(trim($alias))

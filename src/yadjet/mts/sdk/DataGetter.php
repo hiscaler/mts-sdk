@@ -24,4 +24,9 @@ class DataGetter
         return defined($name) ? constant($name) : $defaultValue;
     }
 
+    protected static function getTenantId()
+    {
+        return self::getConstantValue('TENANT_ID', 0);
+    }
+
 }

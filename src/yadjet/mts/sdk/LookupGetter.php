@@ -16,7 +16,7 @@ class LookupGetter extends DataGetter
         $rawData = (new Query())
             ->select(['value', 'return_type', 'label'])
             ->from('{{%lookup}}')
-            ->where(['tenant_id' => self::getConstantValue('TENANT_ID'), 'label' => array_keys($labels)])
+            ->where(['tenant_id' => self::getTenantId(), 'label' => array_keys($labels)])
             ->indexBy('label')
             ->all();
         foreach ($labels as $key => $defautValue) {
@@ -42,8 +42,8 @@ class LookupGetter extends DataGetter
     public static function one($label, $defaultValue = null)
     {
         $rawData = Yii::$app->getDb()->createCommand('SELECT [[value]], [[return_type]] FROM {{%lookup}} WHERE [[tenant_id]] = :tenantId AND [[label]] = :label AND [[enabled]] = :enabled')->bindValues([
-                ':label' => strtoupper(trim($label)),
-                ':tenantId' => self::getConstantValue('TENANT_ID'),
+                ':label' => self::parseLabel($label),
+                ':tenantId' => self::getTenantId(),
                 ':enabled' => self::BOOLEAN_TRUE
             ])->queryOne();
         if ($rawData === false) {

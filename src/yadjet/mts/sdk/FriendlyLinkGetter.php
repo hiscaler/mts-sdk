@@ -17,7 +17,7 @@ class FriendlyLinkGetter extends DataGetter implements DataGetterInterface
     public static function parseQuery($fields = '*', $where = [], $orderBy = 'ordering.asc', $offset = 0, $limit = 10)
     {
         $condition = [
-            'tenant_id' => self::getConstantValue('TENANT_ID'),
+            'tenant_id' => self::getTenantId(),
             'enabled' => self::BOOLEAN_TRUE
         ];
         if (isset($where['group'])) {

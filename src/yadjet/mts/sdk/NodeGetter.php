@@ -45,7 +45,7 @@ class NodeGetter extends DataGetter
      */
     public static function tree()
     {
-        $rawData = Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]], [[name]], [[parent_id]], [[level]] FROM {{%node}} WHERE [[tenant_id]] = :tenantId')->bindValue(':tenantId', self::getConstantValue('TENANT_ID'), \PDO::PARAM_INT)->queryAll();
+        $rawData = Yii::$app->getDb()->createCommand('SELECT [[id]], [[alias]], [[name]], [[parent_id]], [[level]] FROM {{%node}} WHERE [[tenant_id]] = :tenantId')->bindValue(':tenantId', self::getTenantId(), \PDO::PARAM_INT)->queryAll();
 
         return [
             'items' => static::_toTree($rawData, 'id', 'parent_id')
@@ -64,7 +64,7 @@ class NodeGetter extends DataGetter
      */
     public static function rows($parentId = null, $rejectId = null, $id = null, $enabled = 'y', $offset = 0, $limit = 10)
     {
-        $where = ['tenant_id' => self::getConstantValue('TENANT_ID')];
+        $where = ['tenant_id' => self::getTenantId()];
         if (!empty($enabled)) {
             $where['enabled'] = strtolower(trim($enabled)) == 'y' ? Option::BOOLEAN_TRUE : Option::BOOLEAN_FALSE;
         }
@@ -108,7 +108,7 @@ class NodeGetter extends DataGetter
     {
         $sql = 'SELECT [[t.id]], [[t.alias]], [[t.name]], [[t.parent_id]] AS parentId, t.level, [[t.parent_ids]] AS [[parentIds]], [[t.parent_names]] AS parentNames FROM {{%node}} t JOIN {{%node_closure}} c ON [[t.id]] = [[c.child_id]] WHERE [[t.tenant_id]] = :tenantId AND [[c.parent_id]] = :parentId AND [[c.child_id]] <> :childId';
         $bindValues = [
-            ':tenantId' => self::getConstantValue('TENANT_ID'),
+            ':tenantId' => self::getTenantId(),
             ':parentId' => (int) $parentId,
             ':childId' => (int) $parentId
         ];

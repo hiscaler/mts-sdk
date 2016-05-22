@@ -12,7 +12,7 @@ class ApplicationGetter extends DataGetter
         $viewFile = null;
         $parameters = Yii::$app->getDb()->createCommand('SELECT [[parameters]] FROM {{%node}} WHERE [[id]] = :id AND [[tenant_id]] = :tenantId')->bindValues([
                 ':id' => (int) $id,
-                ':tenantId' => self::getConstantValue('TENANT_ID')
+                ':tenantId' => self::getTenantId()
             ])->queryScalar();
         if (!empty($parameters)) {
             foreach (explode("\r\n", $parameters) as $paramater) {
@@ -34,7 +34,7 @@ class ApplicationGetter extends DataGetter
         if ($rejectIds) {
             $sql .= ' AND [[id]] NOT IN (' . implode(',', $rejectIds) . ')';
         }
-        $nodes = Yii::$app->getDb()->createCommand($sql)->bindValue(':tenantId', self::getConstantValue('TENANT_ID'), \PDO::PARAM_INT)->queryAll();
+        $nodes = Yii::$app->getDb()->createCommand($sql)->bindValue(':tenantId', self::getTenantId(), \PDO::PARAM_INT)->queryAll();
 
         foreach ($nodes as $node) {
             foreach (explode("\r\n", $node['parameters']) as $paramater) {

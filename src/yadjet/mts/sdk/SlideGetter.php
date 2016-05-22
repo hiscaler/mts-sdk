@@ -21,7 +21,7 @@ class SlideGetter extends DataGetter implements DataGetterInterface
         }
 
         $condition = [
-            'tenant_id' => self::getConstantValue('TENANT_ID')
+            'tenant_id' => self::getTenantId()
         ];
         if ($where) {
             if (isset($where['group'])) {

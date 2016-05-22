@@ -17,7 +17,7 @@ class ArticleGetter extends DataGetter
         return (new Query())->select(['alias', 'title', 'keywords', 'tags', 'keywords', 'description', 'picture_path', 'content'])
                 ->from('{{%article}}')
                 ->where([
-                    'tenant_id' => self::getConstantValue('TENANT_ID'),
+                    'tenant_id' => self::getTenantId(),
                     'alias' => trim($alias),
                     'enabled' => self::BOOLEAN_TRUE
                 ])
