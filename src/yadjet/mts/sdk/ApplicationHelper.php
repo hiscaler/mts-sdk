@@ -12,7 +12,7 @@ class ApplicationHelper
 
     /**
      * 翻页信息
-     * @param array $meta
+     * @param array $meta 翻页数据
      * @return string
      */
     public static function pagination($meta)

@@ -16,6 +16,11 @@ class AdGetter extends DataGetter
     const TYPE_FLASH = 1;
     const TYPE_TEXT = 2;
 
+    /**
+     * 获取广告位数据（多个）
+     * @param string $alias 广告位别名
+     * @return string
+     */
     public static function rows($alias)
     {
         $db = Yii::$app->getDb();
@@ -66,6 +71,11 @@ class AdGetter extends DataGetter
         }
     }
 
+    /**
+     * 获取广告位数据
+     * @param string $alias 广告位别名
+     * @return string
+     */
     public static function one($alias)
     {
         $db = Yii::$app->getDb();

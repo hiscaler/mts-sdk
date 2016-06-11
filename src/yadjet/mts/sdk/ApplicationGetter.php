@@ -7,6 +7,13 @@ use Yii;
 class ApplicationGetter extends DataGetter
 {
 
+    /**
+     * 获取节点对应的视图文件名称
+     * @param string $id 节点名称
+     * @param string $name 视图名称
+     * @param string $defaultViewFile 默认的视图文件
+     * @return string
+     */
     public static function viewFile($id, $name, $defaultViewFile = null)
     {
         $viewFile = null;
@@ -27,6 +34,11 @@ class ApplicationGetter extends DataGetter
         return !empty($viewFile) ? $viewFile : $defaultViewFile;
     }
 
+    /**
+     * 获取 URL 规则
+     * @param array $rejectIds 不显示的节点
+     * @return string
+     */
     public static function urlRules($rejectIds = [])
     {
         $rules = [];
