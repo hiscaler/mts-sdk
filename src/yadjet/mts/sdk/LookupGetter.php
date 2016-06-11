@@ -26,6 +26,7 @@ class LookupGetter extends DataGetter
                     case static::RETURN_TYPE_INTEGER:
                         $value = (int) $value;
                         break;
+
                     case static::RETURN_TYPE_STRING:
                         $value = (string) $value;
                         break;
@@ -54,6 +55,7 @@ class LookupGetter extends DataGetter
                 case static::RETURN_TYPE_INTEGER:
                     $value = (int) $value;
                     break;
+
                 case static::RETURN_TYPE_STRING:
                     $value = (string) $value;
                     break;
