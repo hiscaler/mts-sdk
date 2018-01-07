@@ -6,7 +6,7 @@ use Yii;
 
 /**
  * 广告数据拉取
- * 
+ *
  * @author hiscaler <hiscaler@gmail.com>
  */
 class AdGetter extends DataGetter
@@ -18,6 +18,7 @@ class AdGetter extends DataGetter
 
     /**
      * 获取广告位数据（多个）
+     *
      * @param string $alias 广告位别名
      * @return string
      */
@@ -25,26 +26,25 @@ class AdGetter extends DataGetter
     {
         $db = Yii::$app->getDb();
         $space = $db->createCommand('SELECT [[id]], [[width]], [[height]] FROM {{%ad_space}} WHERE [[tenant_id]] = :tenantId AND [[status]] = :status AND [[enabled]] = :enabled AND [[alias]] = :alias')->bindValues([
-                ':tenantId' => self::getTenantId(),
-                ':status' => self::BOOLEAN_TRUE,
-                ':enabled' => self::BOOLEAN_TRUE,
-                ':alias' => strtolower(trim($alias))
-            ])->queryOne();
+            ':tenantId' => self::getTenantId(),
+            ':status' => self::BOOLEAN_TRUE,
+            ':enabled' => self::BOOLEAN_TRUE,
+            ':alias' => strtolower(trim($alias))
+        ])->queryOne();
         if ($space === false) {
             return null;
         }
         $ads = $db->createCommand('SELECT [[id]], [[type]], [[url]], [[file_path]], [[text]], [[end_datetime]], [[message]] FROM {{%ad}} WHERE [[space_id]] = :spaceId AND [[status]] = :status AND [[enabled]] = :enabled AND [[begin_datetime]] <= :now ORDER BY [[end_datetime]] DESC')->bindValues([
-                ':spaceId' => $space['id'],
-                ':status' => self::BOOLEAN_TRUE,
-                ':enabled' => self::BOOLEAN_TRUE,
-                ':now' => time()
-            ])->queryAll();
+            ':spaceId' => $space['id'],
+            ':status' => self::BOOLEAN_TRUE,
+            ':enabled' => self::BOOLEAN_TRUE,
+            ':now' => time()
+        ])->queryAll();
         if (!$ads) {
             return [];
         } else {
             $rows = [];
             foreach ($ads as $ad) {
-
                 if ($ad['end_datetime'] < time()) {
                     $output = $ad['message'];
                 } else {
@@ -73,6 +73,7 @@ class AdGetter extends DataGetter
 
     /**
      * 获取广告位数据
+     *
      * @param string $alias 广告位别名
      * @return string
      */
@@ -80,20 +81,20 @@ class AdGetter extends DataGetter
     {
         $db = Yii::$app->getDb();
         $space = $db->createCommand('SELECT [[id]], [[width]], [[height]] FROM {{%ad_space}} WHERE [[tenant_id]] = :tenantId AND [[status]] = :status AND [[enabled]] = :enabled AND [[alias]] = :alias')->bindValues([
-                ':tenantId' => self::getTenantId(),
-                ':status' => self::BOOLEAN_TRUE,
-                ':enabled' => self::BOOLEAN_TRUE,
-                ':alias' => strtolower(trim($alias))
-            ])->queryOne();
+            ':tenantId' => self::getTenantId(),
+            ':status' => self::BOOLEAN_TRUE,
+            ':enabled' => self::BOOLEAN_TRUE,
+            ':alias' => strtolower(trim($alias))
+        ])->queryOne();
         if ($space === false) {
             return null;
         }
         $ad = $db->createCommand('SELECT [[id]], [[type]], [[url]], [[file_path]], [[text]], [[end_datetime]], [[message]] FROM {{%ad}} WHERE [[space_id]] = :spaceId AND [[status]] = :status AND [[enabled]] = :enabled AND [[begin_datetime]] <= :now ORDER BY [[end_datetime]] DESC')->bindValues([
-                ':spaceId' => $space['id'],
-                ':status' => self::BOOLEAN_TRUE,
-                ':enabled' => self::BOOLEAN_TRUE,
-                ':now' => time()
-            ])->queryOne();
+            ':spaceId' => $space['id'],
+            ':status' => self::BOOLEAN_TRUE,
+            ':enabled' => self::BOOLEAN_TRUE,
+            ':now' => time()
+        ])->queryOne();
         if ($ad === false) {
             return null;
         } else {

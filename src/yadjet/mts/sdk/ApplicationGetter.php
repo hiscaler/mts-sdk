@@ -9,6 +9,7 @@ class ApplicationGetter extends DataGetter
 
     /**
      * 获取节点对应的视图文件名称
+     *
      * @param string $id 节点名称
      * @param string $name 视图名称
      * @param string $defaultViewFile 默认的视图文件
@@ -18,9 +19,9 @@ class ApplicationGetter extends DataGetter
     {
         $viewFile = null;
         $parameters = Yii::$app->getDb()->createCommand('SELECT [[parameters]] FROM {{%node}} WHERE [[id]] = :id AND [[tenant_id]] = :tenantId')->bindValues([
-                ':id' => (int) $id,
-                ':tenantId' => self::getTenantId()
-            ])->queryScalar();
+            ':id' => (int) $id,
+            ':tenantId' => self::getTenantId()
+        ])->queryScalar();
         if (!empty($parameters)) {
             foreach (explode("\r\n", $parameters) as $paramater) {
                 if (substr($paramater, 0, 1) == $name) {
@@ -36,6 +37,7 @@ class ApplicationGetter extends DataGetter
 
     /**
      * 获取 URL 规则
+     *
      * @param array $rejectIds 不显示的节点
      * @return string
      */

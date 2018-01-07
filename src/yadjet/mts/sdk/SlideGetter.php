@@ -6,7 +6,7 @@ use Yii;
 
 /**
  * 幻灯片数据拉取
- * 
+ *
  * @author hiscaler <hiscaler@gmail.com>
  */
 class SlideGetter extends DataGetter implements DataGetterInterface
@@ -30,12 +30,12 @@ class SlideGetter extends DataGetter implements DataGetterInterface
         }
 
         return (new \yii\db\Query())
-                ->select($fields)
-                ->from('{{%slide}}')
-                ->where($condition)
-                ->orderBy(self::parseOrderBy($orderBy))
-                ->offset($offset)
-                ->limit($limit);
+            ->select($fields)
+            ->from('{{%slide}}')
+            ->where($condition)
+            ->orderBy(self::parseOrderBy($orderBy))
+            ->offset($offset)
+            ->limit($limit);
     }
 
 }

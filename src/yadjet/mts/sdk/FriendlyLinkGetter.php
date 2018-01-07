@@ -6,12 +6,12 @@ use yii\db\Query;
 
 /**
  * 友情链接数据拉取
- * 
+ *
  * @author hiscaler <hiscaler@gmail.com>
  */
 class FriendlyLinkGetter extends DataGetter implements DataGetterInterface
 {
-    
+
     use DataGetterTrait;
 
     public static function parseQuery($fields = '*', $where = [], $orderBy = 'ordering.asc', $offset = 0, $limit = 10)
@@ -31,12 +31,12 @@ class FriendlyLinkGetter extends DataGetter implements DataGetterInterface
         }
 
         return (new Query())
-                ->select($fields)
-                ->from('{{%friendly_link}}')
-                ->where($condition)
-                ->orderBy(self::parseOrderBy($orderBy))
-                ->offset($offset)
-                ->limit($limit);
+            ->select($fields)
+            ->from('{{%friendly_link}}')
+            ->where($condition)
+            ->orderBy(self::parseOrderBy($orderBy))
+            ->offset($offset)
+            ->limit($limit);
     }
 
     public static function one($params = [])

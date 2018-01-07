@@ -7,7 +7,7 @@ use yii\db\Query;
 
 /**
  * 幻灯片数据拉取
- * 
+ *
  * @author hiscaler <hiscaler@gmail.com>
  */
 class NodeGetter extends DataGetter
@@ -41,6 +41,7 @@ class NodeGetter extends DataGetter
 
     /**
      * 节点树
+     *
      * @return array
      */
     public static function tree()
@@ -54,6 +55,7 @@ class NodeGetter extends DataGetter
 
     /**
      * 返回查询的节点数据（不带分页）
+     *
      * @param string $parentId
      * @param string $rejectId
      * @param string $id
@@ -82,7 +84,7 @@ class NodeGetter extends DataGetter
             $query->andWhere(['id' => $this->cleanIntegerNumbers($id)]);
         }
 
-        $query->offset($offset ? : 0);
+        $query->offset($offset ?: 0);
         if ((int) $limit) {
             $query->limit((int) $limit);
         }
@@ -99,6 +101,7 @@ class NodeGetter extends DataGetter
 
     /**
      * 获取子节点
+     *
      * @param integer $parentId
      * @param string $rejectId
      * @param string $enabled
@@ -133,16 +136,17 @@ class NodeGetter extends DataGetter
 
     /**
      * 获取子节点编号
+     *
      * @param integer $parentId
      * @return array
      */
     public function actionChildrenIds($parentId)
     {
         $childrenIds = Yii::$app->getDb()->createCommand('SELECT [[child_id]] FROM {{%node_closure}} WHERE [[parent_id]] = :parentId AND [[child_id]] IN (SELECT [[id]] FROM {{%node}} WHERE [[tenant_id]] = :tenantId) AND [[child_id]] <> :childId')->bindValues([
-                ':tenantId' => $this->tenantId,
-                ':parentId' => (int) $parentId,
-                ':childId' => (int) $parentId
-            ])->queryColumn();
+            ':tenantId' => $this->tenantId,
+            ':parentId' => (int) $parentId,
+            ':childId' => (int) $parentId
+        ])->queryColumn();
 
         return [
             'items' => $childrenIds,

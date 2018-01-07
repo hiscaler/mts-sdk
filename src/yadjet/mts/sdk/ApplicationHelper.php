@@ -4,7 +4,7 @@ namespace yadjet\mts\sdk;
 
 /**
  * 助手类
- * 
+ *
  * @author hiscaler <hiscaler@gmail.com>
  */
 class ApplicationHelper
@@ -12,6 +12,7 @@ class ApplicationHelper
 
     /**
      * 翻页信息
+     *
      * @param array $meta 翻页数据
      * @return string
      */
@@ -24,7 +25,7 @@ class ApplicationHelper
                 'defaultPageSize' => $meta['perPage'],
             ]);
             $output = \yii\widgets\LinkPager::widget([
-                    'pagination' => $pagination
+                'pagination' => $pagination
             ]);
         }
 

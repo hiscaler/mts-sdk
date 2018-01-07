@@ -43,10 +43,10 @@ class LookupGetter extends DataGetter
     public static function one($label, $defaultValue = null)
     {
         $rawData = Yii::$app->getDb()->createCommand('SELECT [[value]], [[return_type]] FROM {{%lookup}} WHERE [[tenant_id]] = :tenantId AND [[label]] = :label AND [[enabled]] = :enabled')->bindValues([
-                ':label' => self::parseLabel($label),
-                ':tenantId' => self::getTenantId(),
-                ':enabled' => self::BOOLEAN_TRUE
-            ])->queryOne();
+            ':label' => self::parseLabel($label),
+            ':tenantId' => self::getTenantId(),
+            ':enabled' => self::BOOLEAN_TRUE
+        ])->queryOne();
         if ($rawData === false) {
             $value = $defaultValue;
         } else {
