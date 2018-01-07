@@ -114,7 +114,7 @@ trait DataGetterTrait
         ];
     }
 
-    public static function all($fields = '*', $where = [], $orderBy = 'ordering.asc', $page = 1, $pageSize = 10)
+    public static function all($fields = '*', $where = [], $orderBy = 'id.asc', $page = 1, $pageSize = 10)
     {
         $query = static::parseQuery($fields, $where, $orderBy, ($page - 1) * $pageSize, $pageSize);
 
@@ -124,7 +124,7 @@ trait DataGetterTrait
         ];
     }
 
-    public static function rows($fields = '*', $where = [], $orderBy = 'ordering.asc', $offset = 0, $limit = 10)
+    public static function rows($fields = '*', $where = [], $orderBy = 'id.asc', $offset = 0, $limit = 10)
     {
         return static::parseQuery($fields, $where, $orderBy, $offset, $limit)->all();
     }
